@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        *{
+            margin: 0;
+            padding: 0;
+        }
+        #background{
+            background-color:#2D033B;
+            position: absolute;
+            top:0px;
+            left:0px;
+            width: 100vw;
+
+            display: flex;
+            justify-content:center;
+            align-items: center;
+            flex-direction: column;
+            height: 100vh;
+            
+            
+        }
+        #background h1{
+            font-size: 5vw;
+            font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+            color: #c147e9;
+        }
+
+        #box {
+            background-color: #810CA8;
+            height: 35vw;
+            width: 35vw;
+            display: grid;
+            grid-template-rows: repeat(20, 1fr);
+            grid-template-columns: repeat(20, 1fr);
+            margin: 0px;
+            box-shadow:0px 0px 25px #202020;
+            border-radius: 2%;
+            
+            
+
+
+        }
+        #box h5{
+            position: absolute;
+            top :calc(calc(2rem + calc(100vh - 35vw) / 2));
+            left:70vw;
+            color: #e5b8f4;
+            font-size: 3vw;
+            
+
+        }
+        #box h6{
+            position: absolute;
+            top :calc(calc(2rem + calc(100vh - 37.5vw) / 2));
+            left:calc(8.5rem + 70vw);
+            color: #e5b8f4;
+            font-size: 6vw;
+            display: inline-block;
+           
+           
+            
+
+        }
+
+        .snbody {
+            background-color: aqua;
+            
+        }
+        .ersnake{
+            background-color: #810CA8;
+        }
+        .food{
+            background-color:#ff8531;
+            border-radius: 50%;
+         /* box-shadow: 0px 0px 18px 1px #ff8531 */
+            }
+        #upperlayer{
+            height: 100vh;
+            width: 100vw;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .blurbox{
+            height: 35vw;
+            width: 35vw;
+            z-index:3;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            top:1.8vw;
+            
+            
+        }
+        .blurbox button{
+            width: 15vw;
+            height: 3vw;
+         background-color: #e5b8f4;
+         color: #202020;
+         font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+         border-radius: 4rem;
+         display: inline-block;
+         font-size: 1.5rem;
+         
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="background">
+        <h1>Snake Baba</h1>
+    <div id="box">
+      <h5>score</h5>
+      <h6 id="score">0</h6>
+   
+      
+    </div>
+</div>
+<div id = "upperlayer">
+<div class="blurbox">
+    <button onclick="onclick">PLAY</button>
+        </div>
+        </div>
+</body>
+<script>
+    let scorebox=document.getElementById('score');
+    let Snake_erase;
+    let board = document.getElementById('box');
+    let fps = 5;
+    let miliint = 1000 / 30;
+    let lastpainttime = 0;
+    let sped = 1;
+    let snakex; 
+    let snakey; 
+    let xindex; 
+    let yindex ;
+    let erase=[2,10];
+    let gameover=true;
+    let score=0;
+    let foodposition=[1,1];
+    let food;
+   
+let button=document.getElementsByTagName('button');
+button[0].addEventListener("click",onclick);
+
+function onclick(){
+    gameover=false;
+    button[0].style.display="none";
+    for(i=score;i>=1;i--){
+                Snake_erase = document.createElement('div');
+        Snake_erase.style.gridRowStart = snakey[i];
+        Snake_erase.style.gridColumnStart = snakex[i];
+        Snake_erase.classList.add('ersnake');
+        board.appendChild(Snake_erase);
+    }
+            Snake_erase = document.createElement('div');
+        Snake_erase.style.gridRowStart = foodposition[1];
+        Snake_erase.style.gridColumnStart = foodposition[0];
+        Snake_erase.classList.add('ersnake');
+        board.appendChild(Snake_erase);
+
+
+        sped = 10;
+     snakex = [2];
+     snakey = [10];
+     xindex = 1;
+     yindex = 0;
+     score=0;
+     erase=[2,10];
+ foodposition=[3,10];
+    foodgenerate(foodposition[0],foodposition[1]);
+    
+
+
+    main();
+
+}
+   
+
+ 
+    function main(ctime) {
+        if(gameover === false){
+        window.requestAnimationFrame(main);}
+        if ((ctime - lastpainttime) / 1000 < 1 / sped) {
+            return;
+        }
+        lastpainttime = ctime;
+        gameengine();
+    }
+
+    function gameengine() {        
+ 
+         
+        Snakebody = document.createElement('div');
+        Snakebody.style.gridRowStart = snakey[0];
+        Snakebody.style.gridColumnStart = snakex[0];
+        Snakebody.classList.add('snbody');
+        board.appendChild(Snakebody);
+  
+        
+ 
+      
+
+
+        for(i=score;i>0;i--){
+            snakex[i]=snakex[i-1];
+            snakey[i]=snakey[i-1];
+    }
+    snakex[0]=snakex[0]+xindex;
+    snakey[0]=snakey[0]+yindex;
+
+    // erase_zindex_dec[erase_zindex_dec_index+score].back}
+    //     erase_zindex_dec_index++;
+    if(snakex[0] === foodposition[0] && snakey[0] === foodposition[1]){
+         //sped++;  
+        score++;
+        
+        snakex.push(erase[0]);
+        snakey.push(erase[1]);
+        foodposition[0]=Math.trunc(Math.random()*20+1);
+        foodposition[1]=Math.trunc(Math.random()*20+1);
+        console.log(foodposition[0],foodposition[1]);
+        foodgenerate(foodposition[0],foodposition[1]);
+        scorebox.innerHTML=score-1;
+
+        
+    }else{
+        Snake_erase = document.createElement('div');
+        Snake_erase.style.gridRowStart = erase[1];
+        Snake_erase.style.gridColumnStart = erase[0];
+        Snake_erase.classList.add('ersnake');
+        board.appendChild(Snake_erase);
+        
+    }
+
+    erase[0]=snakex[score];
+        erase[1]=snakey[score];
+        colison();
+       snakeeattest();
+
+}    
+
+    //input from keyboard
+            window.addEventListener('keydown', e=>{
+        if(xindex != 0){
+            switch (e.key){
+                case "ArrowUp":
+                xindex=0;
+                yindex=-1;
+                    break;
+                case "ArrowDown":
+                xindex=0;
+                yindex=1; 
+                    break;
+                    default:
+                    break;   
+                 }
+        }
+        if(yindex != 0){
+            switch (e.key){
+                case "ArrowLeft":
+                yindex=0;
+                xindex=-1;
+                    break;
+                case "ArrowRight":
+                yindex=0;
+                xindex=1; 
+                    break;
+                    default:
+                    break;   
+                 }
+        }
+    });
+    function foodgenerate(x,y){
+    food = document.createElement('div');
+        food.style.gridRowStart = y;
+        food.style.gridColumnStart = x;
+        food.classList.add('food');
+        board.appendChild(food);
+    }  
+    function colison(){
+        if(snakex[0] < 1 || snakex[0] >20 || snakey[0] < 1 || snakey[0] >20 ){
+            gameover="true";
+            button[0].style.display="inline-block";
+            let scorebox=document.getElementById('score');
+            button[0].innerHTML="PLAY AGAIN";
+ 
+        }
+    } 
+    function snakeeattest(){
+        for(i=0;i>=score;i++){
+            if(snakex[0] === snakex[i] && snakey[0] === snakey[i] ){
+                console.log("gameover");
+            }
+        }
+        
+    }
+
+</script>
+
+</html>
